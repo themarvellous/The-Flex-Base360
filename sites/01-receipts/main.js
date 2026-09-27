@@ -21,14 +21,14 @@
   // cluster centres are relative to the drawing region; distribution is illustrative
   const CITIES = [
     { n: 'London', s3: 48, s4: 100, d: [.14, .20], m: [.22, .24] },
-    { n: 'Paris', s3: 16, s4: 40, d: [.42, .56], m: [.46, .55] },
+    { n: 'Paris', s3: 16, s4: 40, d: [.42, .56], m: [.40, .60] },
     { n: 'Berlin', s3: 10, s4: 25, d: [.68, .14], m: [.78, .16] },
     { n: 'Lisbon', s3: 10, s4: 25, d: [.04, .80], m: [.10, .78] },
     { n: 'Algiers', s3: 12, s4: 30, d: [.40, .90], m: [.52, .90] },
     { n: 'Oran', s3: 7, s4: 20, d: [.22, .92], m: [.30, .92] },
     { n: 'Constantine', s3: 7, s4: 20, d: [.60, .86], m: [.76, .84] }
   ];
-  const SOON = [{ n: 'Milan', d: [.64, .44], m: [.66, .40] }, { n: 'Cairo', d: [.90, .62], m: [.94, .56] }];
+  const SOON = [{ n: 'Milan', d: [.64, .44], m: [.68, .36] }, { n: 'Cairo', d: [.90, .62], m: [.94, .56] }];
   const STAGES = [
     { label: 'Stage 1/5 · 2019', count: '1', unit: 'flat<br>London', note: 'Raouf moved the furniture in himself.', broke: 'Nothing yet. Every guest message came to one phone.', built: 'A standard: same checklist, same welcome, every stay.' },
     { label: 'Stage 2/5', count: '10', unit: 'units<br>London', note: 'The phone never stopped ringing.', broke: 'Check-ins, cleaners and pricing all ran through the founders.', built: 'Written SOPs for cleaning and check-in. The first ops hire.' },
@@ -62,14 +62,16 @@
     }
     return out;
   }
+  // baseline for a label sitting just under a grid of houses
+  const below = (cy, rows, gap, size) => cy + ((rows - 1) / 2) * gap * 1.08 + size / 2 + (R.mobile ? 11 : 15);
   function layout(st) {
     const count = COUNTS[st], m = Math.min(R.w, R.h), cx = R.x + R.w / 2, cy = R.y + R.h / 2;
     const pos = new Array(N);
     let size;
     labels = []; ghosts = [];
     if (st === 0) { size = m * .62; pos[0] = [cx, cy]; }
-    else if (st === 1) { size = Math.min(R.w / 7.5, R.h / 3.2); grid(10, 5, cx, cy, size * 1.4).forEach((p, k) => pos[k] = p); labels.push({ n: 'London', x: cx, y: cy + size * 1.4 + size * .75 }); }
-    else if (st === 2) { size = Math.min(R.w / 14, R.h / 5.4); grid(30, 10, cx, cy, size * 1.35).forEach((p, k) => pos[k] = p); labels.push({ n: 'London', x: cx, y: cy + size * 2.1 + size * .6 }); }
+    else if (st === 1) { size = Math.min(R.w / 7.5, R.h / 3.2); grid(10, 5, cx, cy, size * 1.4).forEach((p, k) => pos[k] = p); labels.push({ n: 'London', x: cx, y: below(cy, 2, size * 1.4, size) }); }
+    else if (st === 2) { size = Math.min(R.w / 14, R.h / 5.4); grid(30, 10, cx, cy, size * 1.35).forEach((p, k) => pos[k] = p); labels.push({ n: 'London', x: cx, y: below(cy, 3, size * 1.35, size) }); }
     else {
       size = m / (st === 3 ? (R.mobile ? 22 : 17) : (R.mobile ? 32 : 24));
       const gap = size * 1.3;
@@ -82,7 +84,7 @@
         const pts = grid(members.length, cols, ccx, ccy, gap);
         members.forEach((i, k) => pos[i] = pts[k]);
         const rows = Math.ceil(members.length / cols);
-        labels.push({ n: c.n, x: ccx, y: ccy + (rows / 2) * gap * 1.08 + size * .55 });
+        labels.push({ n: c.n, x: ccx, y: below(ccy, rows, gap, size) });
       });
       if (st === 4) SOON.forEach(c => { const [px, py] = R.mobile ? c.m : c.d; ghosts.push({ n: c.n, x: R.x + px * R.w, y: R.y + py * R.h, s: size * 1.5, right: px > .85 }); });
     }
@@ -132,15 +134,17 @@
   }
   function kick() { if (!running) { running = true; raf = requestAnimationFrame(step); } }
 
-  function house(x, y, s, lit, glow) {
-    const w = s * .86, top = y - s / 2, eave = y - s * .06, base = y + s / 2;
-    ctx.beginPath();
-    ctx.moveTo(x - w / 2, base); ctx.lineTo(x - w / 2, eave); ctx.lineTo(x, top); ctx.lineTo(x + w / 2, eave); ctx.lineTo(x + w / 2, base); ctx.closePath();
-    ctx.stroke();
+  // drawn like The Flex's mark: heavy left wall and roof, hairline right side, base stopping short of the left wall
+  function house(x, y, s, lit, glow, lw) {
+    const w = s * .86, top = y - s / 2, eave = y - s * .06, base = y + s / 2, l = x - w / 2, r = x + w / 2;
+    ctx.lineWidth = lw * 1.9;
+    ctx.beginPath(); ctx.moveTo(l, base); ctx.lineTo(l, eave); ctx.lineTo(x, top); ctx.stroke();
+    ctx.lineWidth = Math.max(.6, lw * .7);
+    ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(r, eave); ctx.lineTo(r, base); ctx.lineTo(l + w * .24, base); ctx.stroke();
     const ws = s * .24;
     if (lit) {
       if (glow) { ctx.shadowColor = HL; ctx.shadowBlur = s * .35; }
-      ctx.fillRect(x - ws / 2, y + s * .06, ws, ws);
+      ctx.fillRect(x - ws / 2 + w * .03, y + s * .06, ws, ws);
       if (glow) ctx.shadowBlur = 0;
     }
   }
@@ -152,20 +156,19 @@
     houses.forEach(h => {
       if (h.a < .02 || h.s < .5) return;
       ctx.globalAlpha = h.a;
-      ctx.lineWidth = Math.max(1, h.s * .045);
-      ctx.strokeStyle = 'rgba(233,236,230,.82)';
-      house(h.x, h.y, h.s, h.lit, glow);
+      ctx.strokeStyle = 'rgba(233,236,230,.85)';
+      house(h.x, h.y, h.s, h.lit, glow, Math.max(.8, h.s * (h.s > 60 ? .032 : .045)));
     });
     ctx.globalAlpha = 1;
     // city labels + next cities
-    ctx.font = '500 10.5px "IBM Plex Mono", ui-monospace, monospace';
+    ctx.font = `500 ${R.mobile ? 9 : 10.5}px "IBM Plex Mono", ui-monospace, monospace`;
     ctx.textAlign = 'center';
     ctx.globalAlpha = labelA;
     ctx.fillStyle = 'rgba(233,236,230,.62)';
     labels.forEach(l => ctx.fillText(l.n.toUpperCase(), l.x, l.y));
     ghosts.forEach(g => {
-      ctx.setLineDash([3, 3]); ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(237,213,92,.8)';
-      house(g.x, g.y, g.s, false, false);
+      ctx.setLineDash([3, 3]); ctx.strokeStyle = 'rgba(237,213,92,.8)';
+      house(g.x, g.y, g.s, false, false, .7);
       ctx.setLineDash([]);
       ctx.fillStyle = 'rgba(237,213,92,.85)';
       ctx.textAlign = g.right ? 'right' : 'center';
