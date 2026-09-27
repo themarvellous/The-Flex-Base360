@@ -9,6 +9,8 @@ Take-home design task for The Flex & Base360: a landing page for Flex Academy, a
 
 - `sites/03-214am/`: Exploration 2 (take two), "2:14am". The page is a night in the life of an operator's phone. A pinned scroll story runs the lock-screen clock from 2:14 to 7:30am: notifications pile up (the stall), then each of the four chapters silences its share, ending on "7:30am. Nothing needs you." What you get is a tappable home screen; objections, comparison and fit are a chat thread; booking is a phone app ending in a lock-screen confirmation. On mobile the device frame drops away and the visitor's own phone becomes the phone. Aspekta, with BDO Grotesk for apostrophes and commas.
 
+- `sites/04-convert/`: Exploration 3, "Runs without you". Conversion-first: the promise, who it's for, proof numbers and a one-tap "how many units do you run?" question in the first screen (a tap opens booking at question 2), a before/after phone that flips on its own, then short sections in the brief's argument order with a call to action in each, a value stack, comparison table, guarantee and a sticky mobile CTA.
+
 Placeholders shown as `[X]` (dashed brass outline) await real figures from The Flex and Base360.
 
 Primary audience: operators with 5–30 units. Primary conversion: "Book a free strategy call".
