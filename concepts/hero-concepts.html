@@ -1,0 +1,672 @@
+<title>Flex Academy Hero Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* ---------- Brand tokens (Flex Academy) ---------- */
+:root{
+  --flex:#284E4C;        /* The Flex green (inherited DNA) */
+  --flex-deep:#15302E;
+  --flex-ink:#0E1F1E;
+  --brass:#C6A15B;       /* Academy's own accent: brass key */
+  --brass-lt:#E6D2A4;
+  --linen:#ECEEE8;       /* cool, green-leaning paper */
+  --linen-2:#E1E5DE;
+  --mist:#9FB5B1;
+  --alert:#C8553D;
+  --ok:#3E8E6B;
+
+  --serif:"Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* page chrome (theme-aware) */
+  --bg:#F3F4F1;
+  --surface:#FFFFFF;
+  --text:#152523;
+  --muted:#5A6B68;
+  --line:#D6DCD6;
+  --chip:#E7EBE6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1716; --surface:#152321; --text:#E6ECE9; --muted:#95A7A3; --line:#263836; --chip:#1D2E2C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1716; --surface:#152321; --text:#E6ECE9; --muted:#95A7A3; --line:#263836; --chip:#1D2E2C;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1480px;margin:0 auto;padding-inline:20px;padding-block:28px 64px}
+h1,h2,h3{text-wrap:balance}
+button,select,input{font:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- Presentation chrome ---------- */
+.intro{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:end;margin-bottom:24px}
+.intro h1{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.4vw,46px);line-height:1.05;margin:6px 0 0;letter-spacing:-.01em}
+.intro p{margin:0;color:var(--muted);max-width:60ch}
+.brief{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.brief span{background:var(--chip);border-radius:999px;padding:4px 10px;font-size:12.5px;color:var(--muted)}
+.brief b{color:var(--text);font-weight:600}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);padding-block:12px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.tabs,.seg{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:8px 14px;cursor:pointer;display:flex;gap:10px;align-items:baseline;text-align:left}
+.tab .k{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--text);color:var(--bg);border-color:var(--text)}
+.tab[aria-selected="true"] .k{color:var(--brass)}
+.seg button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);border-color:var(--text)}
+
+.stage{display:flex;justify-content:center;background:repeating-linear-gradient(45deg,transparent 0 9px,color-mix(in srgb,var(--line) 45%,transparent) 9px 10px);border:1px solid var(--line);border-radius:14px;padding:18px;overflow:hidden}
+.frame{width:100%;max-width:1440px;container-type:inline-size;border-radius:10px;overflow:hidden;box-shadow:0 30px 60px -30px rgba(10,25,24,.45);transition:max-width .45s cubic-bezier(.2,.7,.2,1)}
+.stage.mobile .frame{max-width:390px}
+
+.notes{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:18px}
+.notes > div{background:var(--surface);padding:18px 20px}
+.notes h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.notes p{margin:0;font-size:14px}
+.score{display:flex;flex-direction:column;gap:7px;margin-top:2px}
+.score div{display:grid;grid-template-columns:96px 1fr 18px;gap:8px;align-items:center;font-size:12.5px}
+.score i{display:block;height:6px;border-radius:3px;background:var(--chip);position:relative;overflow:hidden}
+.score i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--v);background:var(--brass);border-radius:3px}
+.score b{font-family:var(--mono);font-size:11px;font-weight:500;text-align:right}
+
+.rec{margin-top:40px;display:grid;grid-template-columns:260px 1fr;gap:32px;border-top:1px solid var(--line);padding-top:28px}
+.rec h2{font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.1;margin:6px 0 0}
+.rec ol{margin:0;padding-left:20px;display:grid;gap:10px;max-width:78ch}
+.rec li::marker{font-family:var(--mono);color:var(--brass)}
+.fine{margin-top:22px;color:var(--muted);font-size:12.5px;max-width:90ch}
+
+@media (max-width:900px){
+  .intro,.rec{grid-template-columns:1fr}
+  .notes{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){ .notes{grid-template-columns:1fr} .stage{padding:8px} }
+
+/* =========================================================
+   Shared hero parts (fixed brand palettes: not theme-driven)
+   ========================================================= */
+.hero{position:relative;font-family:var(--sans);color:var(--flex-ink)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px clamp(20px,4.4cqi,64px)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.logo svg{width:26px;height:28px;flex:none}
+.logo span{font-family:var(--serif);font-size:23px;letter-spacing:-.01em;line-height:1}
+.logo small{display:block;white-space:nowrap;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-top:3px}
+.links{display:flex;gap:26px;font-size:14px;opacity:.85}
+.navcta{display:flex;align-items:center;gap:14px;font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;padding:14px 22px;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid transparent;white-space:nowrap;transition:transform .15s ease, background .15s ease}
+.btn:hover{transform:translateY(-1px)}
+.btn .arr{transition:transform .2s ease}
+.btn:hover .arr{transform:translateX(3px)}
+.btn.sm{padding:9px 16px;font-size:13.5px}
+.btn-brass{background:var(--brass);color:var(--flex-ink)}
+.btn-brass:hover{background:#D3B06C}
+.btn-ghost-lt{border-color:rgba(236,238,232,.35);color:var(--linen)}
+.btn-ghost-dk{border-color:rgba(14,31,30,.25);color:var(--flex-ink)}
+.btn-green{background:var(--flex);color:var(--linen)}
+.btn-green:hover{background:#2F5B58}
+.ph{font:inherit;letter-spacing:inherit;color:inherit;background:rgba(198,161,91,.16);outline:1px dashed rgba(198,161,91,.8);outline-offset:-1px;border-radius:.12em;padding:0 .12em;white-space:nowrap}
+.tag-ph{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.55}
+
+/* =========================================================
+   CONCEPT A: The Receipts (founder growth track)
+   ========================================================= */
+.hA{background:radial-gradient(120% 90% at 85% 10%,#2C5552 0%,var(--flex-deep) 55%,#0F2422 100%);color:var(--linen);overflow:hidden}
+.hA::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(236,238,232,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(236,238,232,.045) 1px,transparent 1px);background-size:56px 56px;mask-image:linear-gradient(180deg,#000 0%,transparent 85%);pointer-events:none}
+.hA .nav{position:relative;border-bottom:1px solid rgba(236,238,232,.1)}
+.hA-body{position:relative;display:grid;grid-template-columns:1.25fr 1fr;gap:clamp(24px,4cqi,72px);padding:clamp(40px,5.5cqi,88px) clamp(20px,4.4cqi,64px) 36px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+.eyebrow::before{content:"";width:22px;height:1px;background:currentColor}
+.hA .eyebrow{color:var(--brass-lt)}
+.hA h1{font-family:var(--serif);font-weight:300;font-size:clamp(40px,5.3cqi,82px);line-height:.98;letter-spacing:-.025em;margin:22px 0 22px}
+.hA h1 em{font-style:italic;color:var(--brass-lt);font-weight:300}
+.hA .sub{font-size:clamp(16px,1.35cqi,19px);line-height:1.5;color:rgba(236,238,232,.78);max-width:52ch;margin:0 0 30px}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.cta-note{font-size:12.5px;opacity:.65;margin-top:12px}
+.proof{display:flex;flex-wrap:wrap;gap:0;margin-top:40px;border-top:1px solid rgba(236,238,232,.14)}
+.proof div{padding:16px 26px 0 0;margin-right:26px;border-right:1px solid rgba(236,238,232,.14)}
+.proof div:last-child{border-right:0}
+.proof b{display:block;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1;letter-spacing:-.01em}
+.proof span{font-size:12.5px;opacity:.65}
+
+.ledger{position:relative;background:rgba(236,238,232,.05);border:1px solid rgba(236,238,232,.14);border-radius:18px;padding:26px 26px 22px;backdrop-filter:blur(4px)}
+.ledger-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.count{font-family:var(--serif);font-weight:300;font-size:clamp(64px,8cqi,120px);line-height:.9;letter-spacing:-.04em;margin:18px 0 4px;font-variant-numeric:tabular-nums}
+.count small{font-size:.28em;letter-spacing:0;margin-left:8px;opacity:.7;font-weight:400}
+.ledger h3{font-family:var(--serif);font-weight:400;font-size:22px;margin:0 0 16px;line-height:1.2}
+.ledger dl{display:grid;grid-template-columns:auto 1fr;gap:10px 16px;margin:0;font-size:14px}
+.ledger dt{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding-top:3px}
+.ledger dt.broke{color:#E59A86}
+.ledger dt.built{color:var(--brass-lt)}
+.ledger dd{margin:0;color:rgba(236,238,232,.85)}
+.ledger .fade{transition:opacity .35s ease, transform .35s ease}
+.ledger.swap .fade{opacity:0;transform:translateY(6px)}
+
+.track{position:relative;padding:8px clamp(20px,4.4cqi,64px) 40px}
+.track-rail{position:relative;display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid rgba(236,238,232,.18)}
+.track-fill{position:absolute;top:-1px;left:0;height:2px;background:var(--brass);transition:width .6s cubic-bezier(.2,.7,.2,1)}
+.stop{position:relative;background:none;border:0;color:inherit;text-align:left;padding:18px 12px 0 0;cursor:pointer;opacity:.5;transition:opacity .25s}
+.stop::before{content:"";position:absolute;top:-6px;left:0;width:11px;height:11px;border-radius:50%;background:var(--flex-deep);border:1px solid rgba(236,238,232,.5);transition:all .25s}
+.stop[aria-current="true"],.stop.done{opacity:1}
+.stop.done::before{background:var(--brass);border-color:var(--brass)}
+.stop[aria-current="true"]::before{background:var(--brass);border-color:var(--brass);box-shadow:0 0 0 6px rgba(198,161,91,.22)}
+.stop b{display:block;font-family:var(--serif);font-weight:400;font-size:20px}
+.stop span{font-size:12.5px;opacity:.75}
+.cities{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.cities span{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(236,238,232,.18);border-radius:999px;padding:3px 9px;opacity:.4;transition:all .3s}
+.cities span.on{opacity:1;border-color:var(--brass);color:var(--brass-lt)}
+.cities span.soon{border-style:dashed}
+
+/* =========================================================
+   CONCEPT B: Chaos → System (before / after slider)
+   ========================================================= */
+.hB{background:var(--linen)}
+.hB .nav{border-bottom:1px solid rgba(14,31,30,.08)}
+.hB-head{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(20px,4cqi,64px);align-items:end;padding:clamp(40px,5cqi,80px) clamp(20px,4.4cqi,64px) clamp(28px,3cqi,44px)}
+.hB .eyebrow{color:var(--flex)}
+.hB h1{font-family:var(--serif);font-weight:400;font-size:clamp(38px,5cqi,78px);line-height:1;letter-spacing:-.025em;margin:20px 0 0;color:var(--flex-ink)}
+.hB h1 em{font-style:italic;color:var(--flex)}
+.hB .sub{font-size:clamp(16px,1.3cqi,18px);color:#3D504D;margin:0 0 24px;max-width:46ch}
+.hB .cta-note{color:#3D504D}
+
+.compare{position:relative;margin:0 clamp(20px,4.4cqi,64px) clamp(28px,3.5cqi,56px);height:clamp(420px,36cqi,520px);border-radius:18px;overflow:hidden;--pos:50%;user-select:none;touch-action:pan-y;border:1px solid rgba(14,31,30,.12)}
+.layer{position:absolute;inset:0;padding:26px}
+.chaos{background:#DADFD8;background-image:radial-gradient(rgba(14,31,30,.08) 1px,transparent 1px);background-size:16px 16px}
+.system{background:var(--flex-deep);color:var(--linen);clip-path:inset(0 0 0 var(--pos))}
+.layer-label{position:absolute;top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px;z-index:3}
+.chaos .layer-label{left:18px;background:var(--flex-ink);color:var(--linen)}
+.system .layer-label{right:18px;background:var(--brass);color:var(--flex-ink)}
+.note{position:absolute;width:min(270px,62%);background:#fff;border-radius:12px;padding:11px 13px;box-shadow:0 10px 24px -12px rgba(14,31,30,.45);font-size:13px;line-height:1.35;display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+.note .ic{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:500;color:#fff}
+.note b{display:block;font-size:12px;margin-bottom:1px}
+.note time{font-family:var(--mono);font-size:10px;opacity:.5;float:right}
+.note .badge{position:absolute;top:-6px;right:-6px;background:var(--alert);color:#fff;font-family:var(--mono);font-size:10px;border-radius:999px;padding:1px 6px}
+.dash{position:absolute;inset:64px 26px 26px auto;width:min(620px,calc(100% - 52px));display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-content:start}
+.kpi{background:rgba(236,238,232,.06);border:1px solid rgba(236,238,232,.12);border-radius:12px;padding:14px}
+.kpi span{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.kpi b{display:block;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi i{font-style:normal;font-size:12px;color:#8FD1B0}
+.cal{grid-column:1/-1;background:rgba(236,238,232,.06);border:1px solid rgba(236,238,232,.12);border-radius:12px;padding:14px}
+.cal-row{display:grid;grid-template-columns:70px repeat(7,1fr);gap:4px;align-items:center;font-size:11px;margin-top:6px}
+.cal-row > span:first-child{font-family:var(--mono);opacity:.6;font-size:10px}
+.cal-row i{height:18px;border-radius:4px;background:rgba(236,238,232,.08)}
+.cal-row i.b{background:rgba(198,161,91,.75)}
+.cal-row i.c{background:rgba(143,209,176,.55)}
+.cal-head{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.feed{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.feed div{background:rgba(236,238,232,.06);border:1px solid rgba(236,238,232,.12);border-radius:12px;padding:12px 14px;font-size:12.5px;display:flex;gap:10px;align-items:center}
+.feed div::before{content:"✓";display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:rgba(143,209,176,.2);color:#8FD1B0;font-size:11px;flex:none}
+.handle{position:absolute;top:0;bottom:0;left:var(--pos);width:2px;background:var(--brass);z-index:4;transform:translateX(-1px);pointer-events:none}
+.handle::after{content:"⟷";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:var(--brass);color:var(--flex-ink);display:grid;place-items:center;font-size:18px;box-shadow:0 8px 20px -6px rgba(0,0,0,.4)}
+.compare input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:5;margin:0}
+.illus{position:absolute;bottom:10px;right:14px;z-index:3;font-family:var(--mono);font-size:10px;color:rgba(236,238,232,.5)}
+
+/* =========================================================
+   CONCEPT C: Where are you stuck? (hero = step 1 of the form)
+   ========================================================= */
+.hC{background:#F6F6F2;overflow:hidden}
+.hC .nav{border-bottom:1px solid rgba(14,31,30,.08)}
+.hC-body{display:grid;grid-template-columns:1.45fr 1fr;gap:clamp(24px,4cqi,72px);padding:clamp(40px,5.5cqi,88px) clamp(20px,4.4cqi,64px) clamp(36px,4cqi,64px)}
+.hC .eyebrow{color:var(--flex)}
+.madlib{font-family:var(--serif);font-weight:300;font-size:clamp(34px,4.6cqi,70px);line-height:1.18;letter-spacing:-.02em;margin:22px 0 26px;color:var(--flex-ink)}
+.pick{position:relative;display:inline-block;vertical-align:baseline}
+.pick select{field-sizing:content;appearance:none;-webkit-appearance:none;background:transparent;border:0;border-bottom:2px solid var(--brass);color:var(--flex);font-family:var(--serif);font-style:italic;font-weight:400;font-size:1em;letter-spacing:-.02em;padding:0 .8em 0 .08em;line-height:1.05;cursor:pointer;border-radius:0}
+.pick::after{content:"";position:absolute;right:.12em;top:55%;width:.26em;height:.26em;border-right:2px solid var(--brass);border-bottom:2px solid var(--brass);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.pick select:focus-visible{outline:2px solid var(--brass);outline-offset:4px}
+.answer{border-left:2px solid var(--flex);padding:4px 0 4px 20px;max-width:58ch}
+.answer h2{font-family:var(--serif);font-weight:400;font-size:clamp(20px,1.8cqi,26px);line-height:1.25;margin:0 0 12px;color:var(--flex)}
+.answer ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px;color:#2E403D}
+.answer li{display:grid;grid-template-columns:78px 1fr;gap:12px}
+.answer li span{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#6A7B78;padding-top:3px}
+.hC .ctas{margin-top:28px}
+.prog{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#4E605D;margin-top:14px}
+.prog i{display:flex;gap:4px}
+.prog i::before,.prog i::after{content:""}
+.dots{display:flex;gap:4px}
+.dots b{width:18px;height:4px;border-radius:2px;background:#D2D8D1}
+.dots b.on{background:var(--flex)}
+
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border:1px solid rgba(14,31,30,.08);border-radius:16px;padding:20px}
+.founders{display:flex;align-items:center;gap:14px}
+.avs{display:flex}
+.av{width:52px;height:52px;border-radius:50%;background:linear-gradient(145deg,#C9D3CE,#9FB0AA);border:3px solid #fff;display:grid;place-items:center;font-family:var(--serif);font-size:18px;color:var(--flex-deep)}
+.av + .av{margin-left:-14px}
+.founders p{margin:0;font-size:14px;line-height:1.4}
+.founders small{display:block;font-size:12px;color:#6A7B78;margin-top:2px}
+.card h3{margin:0 0 10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#6A7B78;font-weight:500}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.stats b{display:block;font-family:var(--serif);font-weight:400;font-size:30px;line-height:1;color:var(--flex-ink)}
+.stats span{font-size:12.5px;color:#4E605D}
+.quote{font-family:var(--serif);font-size:18px;line-height:1.35;color:var(--flex-ink);margin:0}
+.quote + p{margin:10px 0 0;font-size:12.5px;color:#6A7B78}
+.ribbon{display:flex;gap:28px;overflow:hidden;border-top:1px solid rgba(14,31,30,.08);padding:14px clamp(20px,4.4cqi,64px);font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6A7B78;white-space:nowrap}
+.ribbon b{color:var(--flex);font-weight:500}
+
+/* ---------- Mobile layouts via container queries ---------- */
+@container (max-width: 720px){
+  .links,.navcta .login{display:none}
+  .nav{padding:16px 20px}
+  .logo span{font-size:20px}
+  .logo small{display:none}
+  .hA-body,.hB-head,.hC-body{grid-template-columns:1fr}
+  .hA-body{padding:36px 20px 20px;gap:28px}
+  .hA h1{font-size:44px}
+  .proof{margin-top:28px}
+  .proof div{padding-right:16px;margin-right:16px}
+  .proof b{font-size:24px}
+  .ctas .btn{width:100%}
+  .ctas{flex-direction:column;align-items:stretch}
+  .ledger{padding:20px}
+  .count{font-size:76px}
+  .track{padding:0 20px 28px}
+  .track-rail{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .stop b{font-size:15px}
+  .stop span{display:none}
+  .hB-head{padding:32px 20px 24px}
+  .hB h1{font-size:42px}
+  .compare{margin:0 12px 20px;height:560px}
+  .dash{inset:58px 14px 14px 14px;width:auto;grid-template-columns:1fr 1fr}
+  .dash .kpi:nth-child(3){display:none}
+  .feed{grid-template-columns:1fr}
+  .note{width:78%}
+  .hC-body{padding:32px 20px 28px}
+  .madlib{font-size:36px;line-height:1.3}
+  .answer li{grid-template-columns:1fr;gap:0}
+  .side .card:last-child{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+}
+</style>
+
+<div class="wrap">
+
+  <header class="intro">
+    <div>
+      <span class="mono" style="color:var(--muted)">Flex Academy · landing page · step 1 of 3</span>
+      <h1>Three ways into the page</h1>
+    </div>
+    <div>
+      <p>Each concept is a full hero for the same visitor: an operator with 5–30 units who is buried in manual work and sceptical of "guru" courses. Switch concepts, try the interactions, and flip to mobile to see how each one reflows.</p>
+      <div class="brief">
+        <span>Audience <b>Stuck operator, 5–30 units</b></span>
+        <span>Primary CTA <b>Book a free strategy call</b></span>
+        <span>Secondary <b>STR scaling checklist</b></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="bar">
+    <div class="tabs" role="tablist" aria-label="Concepts">
+      <button class="tab" role="tab" id="tab-a" aria-controls="panel" aria-selected="true" data-c="a"><span class="k">A</span>The Receipts</button>
+      <button class="tab" role="tab" id="tab-b" aria-controls="panel" aria-selected="false" data-c="b"><span class="k">B</span>Chaos → System</button>
+      <button class="tab" role="tab" id="tab-c" aria-controls="panel" aria-selected="false" data-c="c"><span class="k">C</span>Where are you stuck?</button>
+    </div>
+    <div class="seg" aria-label="Viewport">
+      <button id="vp-desktop" aria-pressed="true" data-vp="desktop">Desktop 1440</button>
+      <button id="vp-mobile" aria-pressed="false" data-vp="mobile">Mobile 390</button>
+    </div>
+  </div>
+
+  <div id="panel" role="tabpanel">
+    <div class="stage" id="stage">
+      <div class="frame">
+
+        <!-- ================= CONCEPT A ================= -->
+        <section class="hero hA" data-concept="a">
+          <nav class="nav">
+            <a class="logo" href="#a" aria-label="Flex Academy">
+              <svg viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 27V10.5L13 1l12 9.5V27"/><path d="M1 27h24"/><text x="13" y="23" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-size="15" fill="currentColor" stroke="none">a</text></svg>
+              <div><span>flex academy.</span><small>by The Flex &amp; Base360</small></div>
+            </a>
+            <div class="links"><span>The method</span><span>Founders</span><span>Programme</span><span>FAQ</span></div>
+            <div class="navcta"><a class="btn btn-brass sm" href="#a">Book a free call</a></div>
+          </nav>
+
+          <div class="hA-body">
+            <div>
+              <span class="eyebrow">12-week programme for STR operators</span>
+              <h1>The playbook that grew The Flex from <em>one flat</em> to <span class="ph">[X]</span> homes in 7&nbsp;cities.</h1>
+              <p class="sub">For operators with 5–30 units who are stuck doing everything themselves. Learn the systems, deals and software the founders still use every day, from the founders.</p>
+              <div class="ctas">
+                <a class="btn btn-brass" href="#a">Book a free strategy call <span class="arr">→</span></a>
+                <a class="btn btn-ghost-lt" href="#a">Get the scaling checklist</a>
+              </div>
+              <div class="cta-note">20–30 min with the team. No pitch deck, just your numbers.</div>
+              <div class="proof">
+                <div><b>2019</b><span>operating since</span></div>
+                <div><b>7</b><span>cities, 2 more coming</span></div>
+                <div><b>150+</b><span>corporate partners</span></div>
+              </div>
+            </div>
+
+            <aside class="ledger" id="ledger" aria-live="polite">
+              <div class="ledger-top">
+                <span class="mono" style="color:var(--brass-lt)" id="lg-stage">Stage 1 of 5</span>
+                <span class="tag-ph" id="lg-year">[year]</span>
+              </div>
+              <div class="count fade"><span id="lg-count">1</span><small id="lg-unit">flat</small></div>
+              <h3 class="fade" id="lg-title">Raouf moved the furniture in himself.</h3>
+              <dl class="fade">
+                <dt class="broke">What broke</dt><dd id="lg-broke">Nothing yet. Every guest message came to one phone.</dd>
+                <dt class="built">What we built</dt><dd id="lg-built">A standard for the home: same checklist, same welcome, every stay.</dd>
+              </dl>
+              <div class="cities" id="cities">
+                <span data-i="0">London</span><span data-i="2">Paris</span><span data-i="2">Lisbon</span><span data-i="3">Berlin</span><span data-i="3">Algiers</span><span data-i="3">Oran</span><span data-i="3">Constantine</span><span class="soon" data-i="4">Milan</span><span class="soon" data-i="4">Cairo</span>
+              </div>
+            </aside>
+          </div>
+
+          <div class="track">
+            <div class="track-rail" role="tablist" aria-label="The Flex growth stages">
+              <div class="track-fill" id="fill" style="width:0%"></div>
+              <button class="stop" data-s="0" aria-current="true"><b>1 flat</b><span>Tower Bridge</span></button>
+              <button class="stop" data-s="1"><b>10 units</b><span>The phone never stops</span></button>
+              <button class="stop" data-s="2"><b>30 units</b><span>Margins get thin</span></button>
+              <button class="stop" data-s="3"><b>100+ units</b><span>New cities, new rules</span></button>
+              <button class="stop" data-s="4"><b><span class="ph">[X]</span> homes</b><span>Base360 runs it</span></button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= CONCEPT B ================= -->
+        <section class="hero hB" data-concept="b" hidden>
+          <nav class="nav">
+            <a class="logo" href="#b" aria-label="Flex Academy" style="color:var(--flex)">
+              <svg viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 27V10.5L13 1l12 9.5V27"/><path d="M1 27h24"/><text x="13" y="23" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-size="15" fill="currentColor" stroke="none">a</text></svg>
+              <div><span>flex academy.</span><small>by The Flex &amp; Base360</small></div>
+            </a>
+            <div class="links"><span>The method</span><span>Founders</span><span>Programme</span><span>FAQ</span></div>
+            <div class="navcta"><a class="btn btn-green sm" href="#b">Book a free call</a></div>
+          </nav>
+
+          <div class="hB-head">
+            <div>
+              <span class="eyebrow">For operators with 5–30 units</span>
+              <h1>You didn't start a rental company to answer <em>guest messages at 2am.</em></h1>
+            </div>
+            <div>
+              <p class="sub">Flex Academy is a 12-week programme on the systems The Flex runs on: pricing, cleaning, hiring, deal structure, and the software that ties it together.</p>
+              <div class="ctas">
+                <a class="btn btn-green" href="#b">Book a free strategy call <span class="arr">→</span></a>
+                <a class="btn btn-ghost-dk" href="#b">Get the scaling checklist</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare" id="compare">
+            <div class="layer chaos" aria-hidden="true">
+              <span class="layer-label">Your week now</span>
+              <div class="note" style="left:6%;top:18%;transform:rotate(-3deg)"><span class="ic" style="background:#FF5A5F">A</span><div><time>02:14</time><b>Guest · Flat 4</b>The door code isn't working and we're outside.</div><span class="badge">14</span></div>
+              <div class="note" style="left:30%;top:9%;transform:rotate(2deg)"><span class="ic" style="background:#25A35A">W</span><div><time>07:02</time><b>Cleaner (Maria)</b>Can't do Hackney today, sorry. Can someone else?</div></div>
+              <div class="note" style="left:14%;top:47%;transform:rotate(1.5deg)"><span class="ic" style="background:#1F7A45">X</span><div><time>09:40</time><b>pricing_v7_FINAL(2).xlsx</b>Weekend rates not updated since March.</div></div>
+              <div class="note" style="left:38%;top:36%;transform:rotate(-2deg)"><span class="ic" style="background:#003580">B</span><div><time>11:15</time><b>Booking.com</b>Overbooking: 2 reservations for 12–14 Oct.</div><span class="badge">!</span></div>
+              <div class="note" style="left:4%;top:74%;transform:rotate(-1deg)"><span class="ic" style="background:#6B5B95">@</span><div><time>13:30</time><b>Landlord</b>Rent for October? Also the boiler is making a noise.</div></div>
+              <div class="note" style="left:34%;top:68%;transform:rotate(2.5deg)"><span class="ic" style="background:#8A6D3B">£</span><div><time>18:05</time><b>You, to yourself</b>Which units actually made money last month?</div></div>
+            </div>
+            <div class="layer system" aria-hidden="true">
+              <span class="layer-label">After week 12</span>
+              <div class="dash">
+                <div class="kpi"><span>Occupancy</span><b>87%</b><i>+11 pts</i></div>
+                <div class="kpi"><span>Your hours on ops</span><b>9 / wk</b><i>from 40+</i></div>
+                <div class="kpi"><span>Inbox</span><b>0</b><i>AI replied to 31</i></div>
+                <div class="cal">
+                  <div class="cal-head"><span>This week · 6 units</span><span>■ booked ■ clean</span></div>
+                  <div class="cal-row"><span>Flat 1</span><i class="b"></i><i class="b"></i><i class="c"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="c"></i></div>
+                  <div class="cal-row"><span>Flat 2</span><i class="b"></i><i class="c"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="c"></i><i class="b"></i></div>
+                  <div class="cal-row"><span>Flat 4</span><i class="c"></i><i class="b"></i><i class="b"></i><i class="b"></i><i class="c"></i><i class="b"></i><i class="b"></i></div>
+                  <div class="cal-row"><span>Hackney</span><i class="b"></i><i class="b"></i><i class="b"></i><i class="c"></i><i class="b"></i><i class="b"></i><i class="b"></i></div>
+                </div>
+                <div class="feed">
+                  <div>Hackney clean reassigned to Tomas, 07:04</div>
+                  <div>Weekend rates raised 8% for Oct events</div>
+                  <div>Double booking blocked across 130+ channels</div>
+                  <div>P&amp;L per unit ready for Monday review</div>
+                </div>
+              </div>
+              <span class="illus">Illustrative figures · Base360 UI concept</span>
+            </div>
+            <div class="handle" aria-hidden="true"></div>
+            <input type="range" id="cmp" min="4" max="96" value="52" aria-label="Compare your week now with after the programme">
+          </div>
+        </section>
+
+        <!-- ================= CONCEPT C ================= -->
+        <section class="hero hC" data-concept="c" hidden>
+          <nav class="nav">
+            <a class="logo" href="#c" aria-label="Flex Academy" style="color:var(--flex)">
+              <svg viewBox="0 0 26 28" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 27V10.5L13 1l12 9.5V27"/><path d="M1 27h24"/><text x="13" y="23" text-anchor="middle" font-family="Newsreader, Georgia, serif" font-size="15" fill="currentColor" stroke="none">a</text></svg>
+              <div><span>flex academy.</span><small>by The Flex &amp; Base360</small></div>
+            </a>
+            <div class="links"><span>The method</span><span>Founders</span><span>Programme</span><span>FAQ</span></div>
+            <div class="navcta"><a class="btn btn-green sm" href="#c">Book a free call</a></div>
+          </nav>
+
+          <div class="hC-body">
+            <div>
+              <span class="eyebrow">Flex Academy · 12-week operator programme</span>
+              <p class="madlib" id="madlib">
+                I run
+                <span class="pick"><select id="c-units" aria-label="Units today">
+                  <option value="1">1–3</option><option value="2">4–10</option><option value="3" selected>11–30</option><option value="4">30+</option>
+                </select></span>
+                units in
+                <span class="pick"><select id="c-city" aria-label="City">
+                  <option>London</option><option>Paris</option><option>Lisbon</option><option>Berlin</option><option>Dubai</option><option>another city</option>
+                </select></span>
+                and I want
+                <span class="pick"><select id="c-target" aria-label="Target">
+                  <option value="2x">twice that</option><option value="50" selected>50+</option><option value="100">100+</option><option value="city">a second city</option>
+                </select></span>
+                by next year.
+              </p>
+
+              <div class="answer" aria-live="polite">
+                <h2 id="c-head">At 11–30 units, margins get thin before they get fat.</h2>
+                <ul id="c-list"></ul>
+              </div>
+
+              <div class="ctas">
+                <a class="btn btn-green" href="#c" id="c-cta">Book my free strategy call <span class="arr">→</span></a>
+                <a class="btn btn-ghost-dk" href="#c">Not ready? Get the scaling checklist</a>
+              </div>
+              <div class="prog"><span class="dots"><b class="on"></b><b class="on"></b><b class="on"></b><b></b></span> 3 of 4 call questions answered. One left, then pick a time.</div>
+            </div>
+
+            <div class="side">
+              <div class="card founders">
+                <div class="avs"><div class="av">R</div><div class="av">M</div></div>
+                <p>Your call is with the team behind The Flex and Base360.<small>Raouf Yousfi &amp; Michael Buggy, founders · photos pending</small></p>
+              </div>
+              <div class="card">
+                <h3>They've done it, and still do</h3>
+                <div class="stats">
+                  <div><b><span class="ph">[X]</span></b><span>homes under management</span></div>
+                  <div><b>7</b><span>cities, since 2019</span></div>
+                  <div><b>150+</b><span>corporate partners</span></div>
+                  <div><b>130+</b><span>channels in Base360</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <p class="quote"><span class="ph">[Operator quote about the programme, to be sourced]</span></p>
+                <p>Placeholder · real operator testimonial needed</p>
+              </div>
+            </div>
+          </div>
+          <div class="ribbon"><span><b>Week 1–3</b> Unit economics</span><span><b>Week 4–6</b> Ops &amp; SOPs</span><span><b>Week 7–9</b> Deals &amp; landlords</span><span><b>Week 10–12</b> Team &amp; scale</span><span>Monthly 1:1 with a founder</span><span>Base360 included</span></div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="notes" id="notes"></div>
+  </div>
+
+  <section class="rec">
+    <div>
+      <span class="mono" style="color:var(--muted)">My recommendation</span>
+      <h2>Lead with C, prove it with A, dramatise the pain with B.</h2>
+    </div>
+    <ol>
+      <li><b>C is the hero.</b> The visitor answers three of the four qualifying questions just by reading the headline. Clicking "Book my free strategy call" carries those answers into the form, so the booking flow starts one step from done. This scores directly on the 25% conversion criterion.</li>
+      <li><b>A becomes the "Who teaches it" section.</b> The growth track is the strongest answer to "why should I trust these people?" It works better lower down, once the visitor has said where they are and can map their stage onto the founders' stages.</li>
+      <li><b>B becomes "The problem" section.</b> The before/after slider shows what "stuck at 5–30 units" feels like and hands off to the Base360 part of the story without turning the page into a software ad.</li>
+      <li>The result is one page argument: where are you, here's why you're stuck, here's who solved it, here's how, book the call.</li>
+    </ol>
+  </section>
+
+  <p class="fine">Placeholders shown as <span class="ph">[X]</span> need real numbers from The Flex (units, guests, team, Base360 customers). Growth stage copy and dashboard figures are illustrative until confirmed with the founders. The house-and-"a" mark is a placeholder; the logo is out of scope. No stock or AI imagery is used on this page.</p>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ----- concept switcher + notes ----- */
+  const NOTES = {
+    a: {
+      bet: "Trust comes first. Sceptical operators have seen every guru; show them receipts before asking for anything.",
+      why: "Maps the visitor's own stage (10, 30 units) onto what broke for The Flex at the same point. Real proof: 2019, 7 cities, 150+ partners.",
+      risk: "Talks about the founders before the visitor feels understood. It needs real unit numbers to land; placeholders weaken it.",
+      score: {Conversion:3, Audience:4, Brand:5, Wow:4}
+    },
+    b: {
+      bet: "Pain first. If the visitor sees their own week on screen, they'll want the other side of the slider.",
+      why: "The 2am door-code message and the pricing_v7_FINAL spreadsheet are this audience's daily life. Dragging turns the promise into something they can feel.",
+      risk: "The 'after' is mostly Base360 UI, which can read as a software ad. The founders and the programme only appear in the subhead.",
+      score: {Conversion:3, Audience:5, Brand:3, Wow:5}
+    },
+    c: {
+      bet: "Let the visitor say where they are, then answer them directly. The hero is step 1 of the booking form.",
+      why: "Serves all three audiences without splitting the page, leads with the 5–30 operator, and cuts form friction: 3 of 4 qualifying questions are answered before the click.",
+      risk: "Quieter on first impression than A or B. The 'wow' comes from the interaction, so it relies on good motion when answers change.",
+      score: {Conversion:5, Audience:5, Brand:4, Wow:3}
+    }
+  };
+  const tabs = document.querySelectorAll('.tab');
+  const heroes = document.querySelectorAll('.hero');
+  const notes = document.getElementById('notes');
+  function renderNotes(c){
+    const n = NOTES[c];
+    const bars = Object.entries(n.score).map(([k,v]) =>
+      `<div><span>${k}</span><i style="--v:${v*20}%"></i><b>${v}/5</b></div>`).join('');
+    notes.innerHTML =
+      `<div><h4>The bet</h4><p>${n.bet}</p></div>
+       <div><h4>Why it fits the stuck operator</h4><p>${n.why}</p></div>
+       <div><h4>Risk</h4><p>${n.risk}</p></div>
+       <div><h4>My read against the grid</h4><div class="score">${bars}</div></div>`;
+  }
+  function show(c){
+    tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.c === c ? 'true' : 'false'));
+    heroes.forEach(h => h.hidden = h.dataset.concept !== c);
+    renderNotes(c);
+    try{ localStorage.setItem('fa-concept', c); }catch(e){}
+  }
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.c)));
+  let start = 'a';
+  const hash = (location.hash || '').slice(1);
+  if (NOTES[hash]) start = hash;
+  else { try{ const s = localStorage.getItem('fa-concept'); if (NOTES[s]) start = s; }catch(e){} }
+  show(start);
+
+  /* ----- viewport toggle ----- */
+  const stage = document.getElementById('stage');
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+    stage.classList.toggle('mobile', b.dataset.vp === 'mobile');
+  }));
+
+  /* ----- Concept A: growth ledger ----- */
+  const STAGES = [
+    {count:'1', unit:'flat', title:'Raouf moved the furniture in himself.', broke:'Nothing yet. Every guest message came to one phone.', built:'A standard for the home: same checklist, same welcome, every stay.'},
+    {count:'10', unit:'units', title:'The phone never stopped ringing.', broke:'Check-ins, cleaners and pricing all ran through the founders.', built:'Written SOPs for cleaning and check-in, and the first ops hire.'},
+    {count:'30', unit:'units', title:'Revenue grew. Margin didn’t.', broke:'Spreadsheet pricing, double bookings, no view of profit per unit.', built:'Dynamic pricing, a unit-level P&L, and better landlord terms.'},
+    {count:'100+', unit:'units', title:'New cities, new rules.', broke:'Every city needed its own team, suppliers and regulations.', built:'A city launch playbook and 150+ corporate housing partners.'},
+    {count:'[X]', unit:'homes', title:'So they built the software.', broke:'No tool on the market could run the whole operation.', built:'Base360: channels, AI pricing, guest inbox, cleaning, finance.'}
+  ];
+  const ledger = document.getElementById('ledger');
+  const stops = document.querySelectorAll('.stop');
+  const fill = document.getElementById('fill');
+  const cityEls = document.querySelectorAll('#cities span');
+  let cur = 0, timer = null;
+  function setStage(i){
+    cur = i;
+    ledger.classList.add('swap');
+    setTimeout(() => {
+      const s = STAGES[i];
+      document.getElementById('lg-count').textContent = s.count;
+      document.getElementById('lg-unit').textContent = s.unit;
+      document.getElementById('lg-title').textContent = s.title;
+      document.getElementById('lg-broke').textContent = s.broke;
+      document.getElementById('lg-built').textContent = s.built;
+      document.getElementById('lg-stage').textContent = `Stage ${i+1} of 5`;
+      ledger.classList.remove('swap');
+    }, reduce ? 0 : 220);
+    stops.forEach((b,k) => { b.setAttribute('aria-current', k===i ? 'true':'false'); b.classList.toggle('done', k<i); });
+    fill.style.width = (i/(STAGES.length-1)*80) + '%';
+    cityEls.forEach(c => c.classList.toggle('on', +c.dataset.i <= i));
+  }
+  stops.forEach(b => b.addEventListener('click', () => { setStage(+b.dataset.s); restart(); }));
+  function restart(){ if (reduce) return; clearInterval(timer); timer = setInterval(() => setStage((cur+1) % STAGES.length), 3800); }
+  setStage(0); restart();
+
+  /* ----- Concept B: compare slider ----- */
+  const cmp = document.getElementById('cmp');
+  const box = document.getElementById('compare');
+  const upd = () => box.style.setProperty('--pos', cmp.value + '%');
+  cmp.addEventListener('input', upd); upd();
+
+  /* ----- Concept C: mad-lib answer ----- */
+  const ANS = {
+    '1': {h:'At 1–3 units, you have a side income. The next step is a company.', l:[
+      ['Weeks 1–3','Unit economics: which deals make money, and which only look like they do.'],
+      ['Weeks 4–6','Your first deal structures: rent-to-rent, management, and how to pitch landlords.'],
+      ['Weeks 7–9','Stop doing it all yourself: the first SOPs and the first hire.']]},
+    '2': {h:'At 4–10 units, the bottleneck is usually you.', l:[
+      ['Weeks 1–3','Get out of the inbox: check-in, cleaning and guest SOPs that run without you.'],
+      ['Weeks 4–6','Automated pricing that beats your spreadsheet on weekends and events.'],
+      ['Weeks 7–9','Your first ops hire: who, when, and what they own.']]},
+    '3': {h:'At 11–30 units, margins get thin before they get fat.', l:[
+      ['Weeks 1–3','A P&L per unit, so you know which ones to renegotiate or drop.'],
+      ['Weeks 4–6','Landlord terms and deal structures that protect your margin.'],
+      ['Weeks 7–9','An ops team and a stack (Base360) that replace the spreadsheets.']]},
+    '4': {h:'At 30+ units, you need a company that can open a city without you.', l:[
+      ['Weeks 1–3','The city launch playbook The Flex used for Paris, Lisbon and Algiers.'],
+      ['Weeks 4–6','Finance and reporting that investors and lenders take seriously.'],
+      ['Weeks 7–9','Corporate housing partnerships: how The Flex built 150+.']]}
+  };
+  const u = document.getElementById('c-units');
+  const head = document.getElementById('c-head');
+  const list = document.getElementById('c-list');
+  const answer = head.parentElement;
+  function renderAns(){
+    const a = ANS[u.value];
+    answer.animate && !reduce && answer.animate([{opacity:.2, transform:'translateY(6px)'},{opacity:1, transform:'none'}], {duration:320, easing:'cubic-bezier(.2,.7,.2,1)'});
+    head.textContent = a.h;
+    list.innerHTML = a.l.map(([w,t]) => `<li><span>${w}</span>${t}</li>`).join('');
+  }
+  u.addEventListener('change', renderAns); renderAns();
+
+  /* size each inline select to its chosen option (fallback where field-sizing is unsupported) */
+  if (!CSS.supports('field-sizing','content')) {
+    const probe = document.createElement('span');
+    probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font-family:var(--serif);font-style:italic;font-weight:400;letter-spacing:-.02em';
+    document.body.appendChild(probe);
+    const fit = sel => { probe.style.fontSize = getComputedStyle(sel).fontSize; probe.textContent = sel.options[sel.selectedIndex].text; sel.style.width = `calc(${probe.offsetWidth}px + 0.95em)`; };
+    const sels = document.querySelectorAll('.pick select');
+    sels.forEach(sel => { fit(sel); sel.addEventListener('change', () => fit(sel)); });
+    new ResizeObserver(() => sels.forEach(fit)).observe(document.getElementById('madlib'));
+  }
+
+  document.querySelectorAll('.hero a[href^="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+})();
+</script>
